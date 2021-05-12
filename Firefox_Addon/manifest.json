@@ -1,0 +1,30 @@
+{
+
+  "manifest_version": 2,
+  "name": "Sarcas'Tweet",
+  "version": "1.0",
+
+  "description": "Know saracasm rate of a tweet",
+
+  "icons": {
+    "48": "assets/icons/main_icon.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.twitter.com/*"],
+      "js": ["scripts/popper.min.js",
+            "scripts/bootstrap.min.js",
+            "scripts/add_detector.js"],
+      "run_at":"document_idle",
+      "css":["assets/stylesheets/stylesheet.css"]
+    }
+  ],
+  "web_accessible_resources": [
+    "scripts/bootstrap.min.js",
+    "scripts/popper.min.js",
+    "assets/icons/dislike.png",
+    "assets/icons/like.png"
+  ]
+
+}

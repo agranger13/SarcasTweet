@@ -20,6 +20,11 @@
       "css":["assets/stylesheets/stylesheet.css"]
     }
   ],
+
+  "permissions": [
+    "https://pa-api-flask.herokuapp.com/evaluate_sarcasm"
+  ],
+
   "web_accessible_resources": [
     "scripts/bootstrap.min.js",
     "scripts/popper.min.js",

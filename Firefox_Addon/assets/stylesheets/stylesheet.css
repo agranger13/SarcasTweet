@@ -6,19 +6,54 @@
   height: 15px;
   opacity: 0.3;
 }
+
 .close:hover {
   opacity: 1;
 }
-.close:before, .close:after {
+
+.close:before,
+.close:after {
   position: absolute;
-  content: ' ';
+  content: '';
   height: 15px;
   width: 2px;
   background-color: #333;
 }
+
 .close:before {
   transform: rotate(45deg);
 }
+
 .close:after {
   transform: rotate(-45deg);
+}
+
+.tooltipElement {
+  background-color: rgb(29, 161, 242);
+  height: 4.9em;
+  width: 11.5em;
+  position: absolute;
+  top: -0.9em;
+  right: -7em;
+  color: white;
+  visibility: hidden;
+}
+
+.tooltipTitle {
+  text-align: center;
+  margin: 0.2em 0;
+  font-size: 0.9em;
+}
+
+.tooltipLegend {
+  text-align: center;
+  margin: 0.1em;
+  font-size: 0.7em;
+}
+
+.tooltipLike,
+.tooltipDislike {
+  height: 15px;
+  width: 15px;
+  margin: 0 20px;
 }

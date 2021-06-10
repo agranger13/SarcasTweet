@@ -1,4 +1,5 @@
 var list_icon = []
+var dict_text = {}
 function display_popup(event){
   if(this.id){
     var tooltip = document.getElementById("tooltip_" + this.id)
@@ -18,30 +19,36 @@ function display_popup(event){
 
 function create_tooltip(id) {
   var tooltipElement = document.createElement("div")
-  tooltipElement.id = id
+  tooltipElement.id = "tooltip_" + id
   tooltipElement.className = "tooltipElement"
 
-  tooltipTitle = document.createElement("p")
-  tooltipTitle.innerHTML = "Sarcasm Rate <br><b>98%</b>"
+  var tooltipTitle = document.createElement("p")
+  tooltipTitle.id = "tooltip_score_" + id
   tooltipTitle.className = "tooltipTitle"
 
-  tooltipLegend = document.createElement("p")
+  var tooltipLegend = document.createElement("p")
   tooltipLegend.innerHTML = "Send feedback"
   tooltipLegend.className = "tooltipLegend"
 
-  tooltipSurvey = document.createElement("div")
+  var tooltipSurvey = document.createElement("div")
   tooltipSurvey.style.textAlign = "center"
 
-  tooltipClose = document.createElement("span")
+  var tooltipClose = document.createElement("span")
   tooltipClose.className = "close"
 
-  tooltipDislikeImg = document.createElement("img");
+  var tooltipDislikeImg = document.createElement("img");
   tooltipDislikeImg.src = browser.extension.getURL("assets/icons/dislike.png");
   tooltipDislikeImg.className = "tooltipDislike"
+  tooltipDislikeImg.addEventListener("click",function(e) {
+        send_feedback(dict_text[id],0);
+      },false)
 
-  tooltipLikeImg = document.createElement("img");
+  var tooltipLikeImg = document.createElement("img");
   tooltipLikeImg.src = browser.extension.getURL("assets/icons/like.png");
   tooltipLikeImg.className = "tooltipLike"
+  tooltipLikeImg.addEventListener("click",function(e) {
+    send_feedback(dict_text[id],1);
+  },false)
 
   tooltipSurvey.appendChild(tooltipDislikeImg)
   tooltipSurvey.appendChild(tooltipLikeImg)
@@ -101,7 +108,7 @@ function add_icon() {
       div_middle_bot.className = "css-901oao r-1awozwy r-m0bqgq r-6koalj r-1qd0xha r-a023e6 r-16dba41 r-1h0z5md r-rjixqe r-bcqeeo r-o7ynqc r-clp7b1 r-3s2u2q r-qvutc0"
       var percent = document.createElement("p")
 
-      percent.id = "SarcasTweet_score_element" + my_id
+      percent.id = "percent_" + div_top.id
       var tweet_text = function (tweet) {
         var text_element = tweet.previousSibling.previousSibling
         result = ""
@@ -112,6 +119,7 @@ function add_icon() {
         }
         return result
       }
+      dict_text[div_top.id]=tweet_text(tweet)
 
       // percent.innerHTML="89%"
       percent.style.paddingLeft = "0.2em"
@@ -126,7 +134,7 @@ function add_icon() {
       new_icon.innerHTML = '<svg class="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1hdv0qi" enable-background="new 0 0 64 64" height="512" viewBox="0 0 64 64" width="512" xmlns="http://www.w3.org/2000/svg"><path d="m34.306 17.72 1.389-1.439c-3.141-3.029-8.248-3.029-11.389 0l1.389 1.439c2.374-2.291 6.236-2.291 8.611 0z"/><path d="m19.694 16.28c-3.141-3.029-8.248-3.029-11.389 0l1.389 1.439c2.375-2.291 6.236-2.291 8.611 0z"/><path d="m61.517 18.144c-.299-.182-.671-.192-.982-.028-6.281 3.306-13.222 4.806-20.109 4.533 1.044-3.199 1.574-6.438 1.574-9.649v-11c0-.351-.184-.675-.483-.856-.3-.181-.674-.19-.982-.028-5.694 2.999-12.103 4.584-18.535 4.584s-12.841-1.585-18.534-4.585c-.308-.163-.683-.153-.983.029s-.483.505-.483.856v11c0 8.008 3.366 16.228 9.736 23.771 4.782 5.663 9.5 8.919 9.699 9.055.17.115.368.174.565.174.196 0 .393-.058.562-.173.052-.036 1.094-.752 2.666-2.07 1.599 3.415 3.774 6.777 6.507 10.013 4.782 5.663 9.5 8.919 9.699 9.055.171.116.369.175.566.175s.395-.059.564-.175c.199-.136 4.917-3.392 9.699-9.055 6.371-7.542 9.737-15.762 9.737-23.77v-11c0-.351-.184-.675-.483-.856zm-39.515 25.622c-3.107-2.325-18.002-14.328-18.002-30.766v-9.38c5.603 2.674 11.791 4.08 18 4.08s12.397-1.406 18-4.08v9.38c0 3.16-.557 6.355-1.643 9.511-5.133-.472-10.197-1.925-14.891-4.396-.312-.164-.684-.153-.982.028-.3.182-.484.506-.484.857v11c0 .331.015.664.026.995-2.019.017-3.938-.599-5.319-1.703-.39-.39-1.018-.386-1.409.005-.193.193-.29.448-.291.703 0 .144.03.287.091.42.224.541 2.44 5.58 6.902 5.58.202 0 .407-.024.612-.046.4 1.967.998 3.933 1.784 5.886-1.03.883-1.878 1.543-2.394 1.926zm.154-10.775c.034.326.081.653.126.98-1.335.086-2.512-.547-3.37-1.391 1.033.292 2.128.43 3.244.411zm37.844-2.991c0 16.415-14.889 28.433-18 30.764-3.114-2.329-18-14.329-18-30.764v-9.38c11.385 5.436 24.615 5.436 36 0z"/><path d="m54.306 34.72 1.389-1.439c-3.141-3.029-8.248-3.029-11.389 0l1.389 1.439c2.374-2.291 6.236-2.291 8.611 0z"/><path d="m39.694 33.28c-3.141-3.029-8.248-3.029-11.389 0l1.389 1.439c2.375-2.291 6.236-2.291 8.611 0z"/><path d="m47.373 46.221c-2.963 2.383-7.783 2.383-10.746 0-.354-.283-.857-.293-1.222-.024-.365.271-.503.753-.334 1.175.092.23 2.305 5.628 6.929 5.628s6.837-5.398 6.929-5.629c.169-.422.031-.904-.334-1.175-.365-.269-.867-.259-1.222.025zm-5.373 4.779c-1.261 0-2.301-.645-3.104-1.439 2.011.563 4.214.563 6.221-.004-.804.797-1.847 1.443-3.117 1.443z"/></svg>'
 
 
-      var tooltipElement = create_tooltip("tooltip_" + div_top.id)
+      var tooltipElement = create_tooltip(div_top.id)
 
 
       div_bot.appendChild(new_icon)
@@ -141,41 +149,52 @@ function add_icon() {
       tweet.appendChild(div_top)
       tweet.appendChild(tooltipElement)
 
-      evaluate_sarcasm(tweet_text(tweet),percent.id)
+      evaluate_sarcasm(div_top.id)
     }
   }
   add_listener()
 }
 
-function evaluate_sarcasm(text, id){
-  console.log(text)
-
+function evaluate_sarcasm(id){
+  var tootltipID = "tooltip_score_" + id
+  var iconID = "percent_" + id
+  console.log(iconID)
   var xmlHttp = new XMLHttpRequest();
-  xmlHttp.open( "POST", "http://localhost:5000/evaluate_sarcasm", true ); // false for synchronous request
+  xmlHttp.open( "POST", "https://pa-api-flask.herokuapp.com/evaluate_sarcasm", true ); // false for synchronous request
   xmlHttp.setRequestHeader('Content-Type', 'application/json');
 
   xmlHttp.onreadystatechange = function() {
-    if (xhr.readyState === 4) {
+    if (xmlHttp.readyState === 4 && xmlHttp.status == 200) {
       console.log(xmlHttp.response); // Par défault une DOMString
-      tweet_score = document.getElementById(id)
+      var tweet_score = document.getElementById(iconID)
+      var tootltip_score = document.getElementById(tootltipID)
+
+      var responseJSON = JSON.parse(xmlHttp.response)
+      tootltip_score.innerHTML="Sarcasm Rate <br><b>"+Math.round(responseJSON.score)+"%</b>"
+      tweet_score.innerHTML=Math.round(responseJSON.score)+"%"
+    }else {
+      console.log(xmlHttp.status);
     }
   }
 
-  xmlHttp.send( JSON.stringify({ text : text }) );
+  xmlHttp.send( JSON.stringify({ text : dict_text[id] }) );
 }
-// setInterval(add_icon,2000)
-var xhr = new XMLHttpRequest();
-xhr.open( "POST", "https://pa-api-flask.herokuapp.com/evaluate_sarcasm", true ); // false for synchronous request
-xhr.setRequestHeader('Content-Type', 'application/json');
-xhr.onreadystatechange = function() {
-  let status = this.status;
 
-  if (xhr.readyState === 4 && xhr.status == 200) {
-    console.log(xhr.response);
-  } else {
-    console.log(status);
+function send_feedback(text, label){
+  console.log(text + " => " + label)
+  var xmlHttp = new XMLHttpRequest();
+  xmlHttp.open( "POST", "https://pa-api-flask.herokuapp.com/send_feedback", true ); // false for synchronous request
+  xmlHttp.setRequestHeader('Content-Type', 'application/json');
+
+  xmlHttp.onreadystatechange = function() {
+    if (xmlHttp.readyState === 4 && xmlHttp.status == 200) {
+      console.log(xmlHttp.response);
+    }else {
+      console.log(xmlHttp.status);
+    }
   }
+
+  xmlHttp.send( JSON.stringify({ text : text, label: label }) );
 }
 
-
-xhr.send( JSON.stringify({"text" : "My values"}));
+setInterval(add_icon,2000)

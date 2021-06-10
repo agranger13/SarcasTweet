@@ -31,7 +31,7 @@ def send_feedback():
     es = ES_Data()
     data = request.json
     print(data["text"]," => ",data["label"])
-    es.send(data["text"],data["label"])
+    return es.send(data["text"],data["label"])
 
 def predict(text):
     score = random.random() * 100
@@ -50,7 +50,7 @@ class ES_Data:
         body = {"text": text, "label": label}
         print(json.dumps(body))
 
-        print(self.es.index(index="feedback", body=body))
+        return self.es.index(index="feedback", body=body)
 
 def predict(text):
     score = random.random() * 100

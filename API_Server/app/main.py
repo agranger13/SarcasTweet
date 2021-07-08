@@ -1,11 +1,12 @@
 import random
-
 from tensorflow import keras
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from elasticsearch import Elasticsearch, helpers
 import json
 import random
+
+from API_Server.app.train_model import train_model
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
@@ -55,14 +56,4 @@ class ES_Data:
         return self.es.index(index="tweets", body=body)
 
 def predict(s):
-    #model = keras.models.load_model('path/to/location')
-    recup_data = pd.DataFrame({"Tweet": [s]})
-    test_lignes = CleanTokenize(recup_data)
-    test_sequences = tokenizer_obj.texts_to_sequences(test_lignes)
-    test_review = pad_sequences(test_sequences, maxlen=max_length, padding='post')
-    prediction = model.predict(test_review)
-    prediction *= 100
-    if prediction[0][0] >= 50:
-        return "sarcastic"
-    else:
-        return "not sarcastic"
+    train_model.is_ironique()

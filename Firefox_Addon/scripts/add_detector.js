@@ -23,7 +23,7 @@ function create_tooltip(id) {
   tooltipElement.className = "tooltipElement"
 
   var tooltipTitle = document.createElement("p")
-  tooltipTitle.id = "tooltip_score_" + id
+  tooltipTitle.id = "tooltip_label_" + id
   tooltipTitle.className = "tooltipTitle"
 
   var tooltipLegend = document.createElement("p")
@@ -62,21 +62,21 @@ function create_tooltip(id) {
 }
 
 function add_listener(){
-  list_score_item = document.querySelectorAll("[id^=SarcasTweet_score_]")
-  for (item of list_score_item){
+  list_label_item = document.querySelectorAll("[id^=SarcasTweet_label_]")
+  for (item of list_label_item){
     item.addEventListener("click",display_popup)
     list_icon.push(item.id)
   }
 
-  list_score_item = document.querySelectorAll("[id^=tooltip_SarcasTweet_score_]")
-  for (item of list_score_item){
+  list_label_item = document.querySelectorAll("[id^=tooltip_SarcasTweet_label_]")
+  for (item of list_label_item){
     item.addEventListener("click",function(e) {
         e.preventDefault();
       },false)
   }
 
-  list_score_item = document.querySelectorAll("[id^=tooltip_SarcasTweet_score_]>.close")
-  for (item of list_score_item){
+  list_label_item = document.querySelectorAll("[id^=tooltip_SarcasTweet_label_]>.close")
+  for (item of list_label_item){
     item.addEventListener("click",display_popup,false)
   }
 }
@@ -89,7 +89,7 @@ function add_icon() {
     if (Array.from(tweet.childNodes)
         .filter(div => div.id && list_icon.includes(div.id))
         .length == 0) {
-      console.log(Array.from(tweet.childNodes).filter(div => div.id && div.id.match(/SarcasTweet_score.*/g).length > 0))
+      console.log(Array.from(tweet.childNodes).filter(div => div.id && div.id.match(/SarcasTweet_label.*/g).length > 0))
       var ID = function () {
         // Math.random should be unique because of its seeding algorithm.
         // Convert it to base 36 (numbers + letters), and grab the first 9 characters
@@ -99,7 +99,7 @@ function add_icon() {
       var div_top = document.createElement("button")
       div_top.className = "css-1dbjc4n r-18u37iz r-1h0z5md"
       my_id = Math.random().toString(36).substr(2, 9)
-      div_top.id = "SarcasTweet_score_" + my_id
+      div_top.id = "SarcasTweet_label_" + my_id
       div_top.style.background = "none"
       var div_middle = document.createElement("div")
       div_middle.className = "css-18t94o4 css-1dbjc4n r-1777fci r-bt1l66 r-1ny4l3l r-bztko3 r-lrvibr"
@@ -156,7 +156,7 @@ function add_icon() {
 }
 
 function evaluate_sarcasm(id){
-  var tootltipID = "tooltip_score_" + id
+  var tootltipID = "tooltip_label_" + id
   var iconID = "percent_" + id
   console.log(iconID)
   var xmlHttp = new XMLHttpRequest();
@@ -166,12 +166,12 @@ function evaluate_sarcasm(id){
   xmlHttp.onreadystatechange = function() {
     if (xmlHttp.readyState === 4 && xmlHttp.status == 200) {
       console.log(xmlHttp.response); // Par défault une DOMString
-      var tweet_score = document.getElementById(iconID)
-      var tootltip_score = document.getElementById(tootltipID)
+      var tweet_label = document.getElementById(iconID)
+      var tootltip_label = document.getElementById(tootltipID)
 
       var responseJSON = JSON.parse(xmlHttp.response)
-      tootltip_score.innerHTML="Sarcasm Rate <br><b>"+Math.round(responseJSON.score)+"%</b>"
-      tweet_score.innerHTML=Math.round(responseJSON.score)+"%"
+      tootltip_label.innerHTML="It is <br><b>"+define_label(responseJSON.label)+"</b>"
+      tweet_label.innerHTML=define_label(responseJSON.label)
     }else {
       console.log(xmlHttp.status);
     }
@@ -195,6 +195,15 @@ function send_feedback(text, label){
   }
 
   xmlHttp.send( JSON.stringify({ text : text, label: label }) );
+}
+
+function define_label(bool){
+  console.log("boobl : " + bool)
+  if(bool){
+    return "sarcastic"
+  }else{
+    return "not sarcastic"
+  }
 }
 
 setInterval(add_icon,2000)

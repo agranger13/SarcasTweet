@@ -1,14 +1,28 @@
 import random
+
 from tensorflow import keras
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 from elasticsearch import Elasticsearch, helpers
 import json
 import random
+import pandas as pd
+import re
+from tensorflow.python.keras.preprocessing.text import Tokenizer
+from tensorflow.python.keras.preprocessing.sequence import pad_sequences
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+import nltk
+import string
+nltk.download('punkt')
+nltk.download('stopwords')
 
-from API_Server.app.train_model import train_model
 
-app = Flask(__name__)
+app = Flask(__name__,
+            static_url_path='',
+            static_folder='static',
+            template_folder='templates'
+            )
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route('/')
@@ -55,5 +69,71 @@ class ES_Data:
 
         return self.es.index(index="tweets", body=body)
 
+def CleanTokenize(df):
+    head_lines = list()
+    lines = df["Tweet"].values.tolist()
+
+    for line in lines:
+        text = line.lower()
+        emoji = re.compile("["
+                           u"\U0001F600-\U0001FFFF"  # emoticones
+                           u"\U0001F300-\U0001F5FF"  # symboles 
+                           u"\U0001F680-\U0001F6FF" 
+                           u"\U0001F1E0-\U0001F1FF"  # drapeau (iOS)
+                           u"\U00002702-\U000027B0"
+                           u"\U000024C2-\U0001F251"
+                           "]+", flags=re.UNICODE)
+        text = text.lower()
+        text = emoji.sub(r'', text)
+        text = re.sub(r" vs ", "vous", text)
+        text = re.sub(r" slt ", "salut", text)
+        text = re.sub(r" stp ", "s'il te plaît", text)
+        text = re.sub(r" mm ", "meme", text)
+        text = re.sub(r" mtn ", "maintenant", text)
+        text = re.sub(r" vrm ", "vraiment", text)
+        text = re.sub(r" tt ", "tout", text)
+        text = re.sub(r" pq ", "pourquoi", text)
+        text = re.sub(r" pk ", "pourquoi", text)
+        text = re.sub(r" tkt ", "t inquiete", text)
+        text = re.sub(r" tqt ", "t inquiete", text)
+        text = re.sub(r" t ", "tu es", text)
+        text = re.sub(r" tas ", "tu as", text)
+        text = re.sub(r" t'as ", "tu as", text)
+        text = re.sub(r" t'es ", "tu es", text)
+        text = re.sub(r" t'est ", "tu es", text)
+        text = re.sub(r" maie ", "mais", text)
+        text = re.sub(r" mai ", "mais", text)
+        text = re.sub(r" y'a ", "il y a", text)
+        text = re.sub(r" ya ", "il y a", text)
+        text = re.sub(r" j ", "je", text)
+        text = re.sub(r" j ai ", "j'ai", text)
+        text = re.sub(r" l ", "l'", text)
+        text = re.sub(r" c ", "c'est", text)
+        text = re.sub(r" bcp ", "beaucoup", text)
+        text = re.sub(r" jvais ", "je vais", text)
+        text = re.sub(r" jpense ", "je pense", text)
+        text = re.sub(r"[,.\"\'!@#$%^&*(){}?/;`~:<>+=-]", "", text)
+        text = re.sub(r"’", "", text)
+        text = re.sub(r"»", "", text)
+        tokens = word_tokenize(text)
+        table = str.maketrans('', '', string.punctuation)
+        stripped = [w.translate(table) for w in tokens]
+        stop_words = set(stopwords.words("french"))
+        words = [w for w in stripped if not w in stop_words]
+        head_lines.append(words)
+    return head_lines
+
 def predict(s):
-    train_model.is_ironique()
+    tokenizer_obj=Tokenizer()
+    model = keras.models.load_model('app/model/model_trained')
+    recup_data = pd.DataFrame({"Tweet": [s]})
+    test_lignes = CleanTokenize(recup_data)
+    test_sequences = tokenizer_obj.texts_to_sequences(test_lignes)
+    test_review = pad_sequences(test_sequences, maxlen=25, padding='post')
+    prediction = model.predict(test_review)
+    prediction *= 100
+    print(prediction)
+    if prediction[0][0] >= 50:
+        return "sarcastic"
+    else:
+        return "not sarcastic"

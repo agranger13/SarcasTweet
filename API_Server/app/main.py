@@ -134,6 +134,6 @@ def predict(s):
     prediction *= 100
     print(prediction)
     if prediction[0][0] >= 50:
-        return "sarcastic"
+        return prediction[0][0]
     else:
-        return "not sarcastic"
+        return prediction[0][0]

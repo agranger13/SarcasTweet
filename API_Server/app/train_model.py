@@ -100,7 +100,7 @@ def CleanTokenize(df):
 head_lines = CleanTokenize(data)
 
 validation_split = 0.2
-max_length = 25
+max_length = 32
 tokenizer_obj = Tokenizer()
 tokenizer_obj.fit_on_texts(head_lines)
 sequences = tokenizer_obj.texts_to_sequences(head_lines)
@@ -152,7 +152,7 @@ layer = Embedding(len(word_index) + 1,
 
 model = Sequential()
 model.add(layer)
-model.add(Bidirectional(LSTM(units=64 , recurrent_dropout = 0.25 , dropout = 0.2)))
+model.add(Bidirectional(LSTM(units=128 , recurrent_dropout = 0.15 , dropout = 0.25)))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['acc'])
 model.fit(X_train_pad, y_train, batch_size=32, epochs=30, validation_data=(X_test_pad, y_test), verbose=2)

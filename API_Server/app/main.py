@@ -36,7 +36,7 @@ def evaluate_sarcasm():
     print(request)
     data = request.json
     print(data["text"])
-    result = {"label": predict(data["text"])}
+    result = {"label": str(predict(data["text"]))}
     return jsonify(result)
 
 
@@ -133,7 +133,4 @@ def predict(s):
     prediction = model.predict(test_review)
     prediction *= 100
     print(prediction)
-    if prediction[0][0] >= 50:
-        return prediction[0][0]
-    else:
-        return prediction[0][0]
+    return prediction[0][0]

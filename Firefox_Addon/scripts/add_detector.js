@@ -20,6 +20,7 @@ function display_popup(event){
 function create_tooltip(id) {
   var tooltipElement = document.createElement("div")
   tooltipElement.id = "tooltip_" + id
+  tooltipElement.style.visibility="hidden"
   tooltipElement.className = "tooltipElement"
 
   var tooltipTitle = document.createElement("p")
@@ -37,16 +38,20 @@ function create_tooltip(id) {
   tooltipClose.className = "close"
 
   var tooltipDislikeImg = document.createElement("img");
-  tooltipDislikeImg.src = browser.extension.getURL("assets/icons/dislike.png");
+  tooltipDislikeImg.src = browser.extension.getURL("assets/icons/icons-moins.png");
   tooltipDislikeImg.className = "tooltipDislike"
   tooltipDislikeImg.addEventListener("click",function(e) {
+        console.log("tooltip_" + id)
+        console.log(document.getElementById("tooltip_" + id))
+        document.getElementById("tooltip_" + id).style.visibility="hidden"
         send_feedback(dict_text[id],0);
       },false)
 
   var tooltipLikeImg = document.createElement("img");
-  tooltipLikeImg.src = browser.extension.getURL("assets/icons/like.png");
+  tooltipLikeImg.src = browser.extension.getURL("assets/icons/icons-plus.png");
   tooltipLikeImg.className = "tooltipLike"
   tooltipLikeImg.addEventListener("click",function(e) {
+    document.getElementById("tooltip_" + id).style.visibility="hidden"
     send_feedback(dict_text[id],1);
   },false)
 
@@ -97,10 +102,10 @@ function add_icon() {
         return '_' + Math.random().toString(36).substr(2, 9);
       };
       var div_top = document.createElement("button")
-      div_top.className = "css-1dbjc4n r-18u37iz r-1h0z5md"
+      div_top.className = "css-1dbjc4n r-18u37iz r-1h0z5md SarcasTweet_score"
       my_id = Math.random().toString(36).substr(2, 9)
       div_top.id = "SarcasTweet_score_" + my_id
-      div_top.style.background = "none"
+      // div_top.style.background = "none"
       var div_middle = document.createElement("div")
       div_middle.className = "css-18t94o4 css-1dbjc4n r-1777fci r-bt1l66 r-1ny4l3l r-bztko3 r-lrvibr"
 
@@ -170,8 +175,16 @@ function evaluate_sarcasm(id){
       var tootltip_score = document.getElementById(tootltipID)
 
       var responseJSON = JSON.parse(xmlHttp.response)
-      tootltip_score.innerHTML="Sarcasm Rate <br><b>"+Math.round(responseJSON.label)+"</b>"
-      tweet_score.innerHTML=Math.round(responseJSON.label)
+      var percent = Math.round(responseJSON.label)
+      tootltip_score.innerHTML="Sarcasm Rate <br><b>"+percent+"%</b>"
+      tweet_score.innerHTML=percent+"% sarcastic"
+      if(percent>65){
+        tweet_score.parentElement.className=tweet_score.parentElement.className + " isSarcasm"
+      }else if (40<=percent && percent>=60){
+        tweet_score.parentElement.className=tweet_score.parentElement.className + " isNeutral"
+      }else{
+        tweet_score.parentElement.className=tweet_score.parentElement.className + " isNotSarcasm"
+      }
     }else {
       console.log(xmlHttp.status);
     }

@@ -22,14 +22,15 @@
   ],
 
   "permissions": [
-    "https://pa-api-flask.herokuapp.com/evaluate_sarcasm"
+    "*://ec2-18-117-242-83.us-east-2.compute.amazonaws.com:5000/*",
+    "*://ec2-18-117-242-83.us-east-2.compute.amazonaws.com/*"
   ],
 
   "web_accessible_resources": [
     "scripts/bootstrap.min.js",
     "scripts/popper.min.js",
-    "assets/icons/dislike.png",
-    "assets/icons/like.png"
+    "assets/icons/icons-moins.png",
+    "assets/icons/icons-plus.png"
   ]
 
 }

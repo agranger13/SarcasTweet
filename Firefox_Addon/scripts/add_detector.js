@@ -41,10 +41,9 @@ function create_tooltip(id) {
   tooltipDislikeImg.src = browser.extension.getURL("assets/icons/icons-moins.png");
   tooltipDislikeImg.className = "tooltipDislike"
   tooltipDislikeImg.addEventListener("click",function(e) {
-        console.log("tooltip_" + id)
-        console.log(document.getElementById("tooltip_" + id))
         document.getElementById("tooltip_" + id).style.visibility="hidden"
         send_feedback(dict_text[id],0);
+        alert("Merci de votre feedback et de contribuer à l'amélioration de Sarcastweet")
       },false)
 
   var tooltipLikeImg = document.createElement("img");
@@ -53,6 +52,7 @@ function create_tooltip(id) {
   tooltipLikeImg.addEventListener("click",function(e) {
     document.getElementById("tooltip_" + id).style.visibility="hidden"
     send_feedback(dict_text[id],1);
+    alert("Merci de votre feedback et de contribuer à l'amélioration de Sarcastweet")
   },false)
 
   tooltipSurvey.appendChild(tooltipDislikeImg)
@@ -178,7 +178,7 @@ function evaluate_sarcasm(id){
       var percent = Math.round(parseFloat(responseJSON.label))
       tootltip_score.innerHTML="Sarcasm Rate <br><b>"+percent+"%</b>"
       tweet_score.innerHTML=percent+"% sarcastic"
-      if(percent>65){
+      if(percent>60){
         tweet_score.parentElement.className=tweet_score.parentElement.className + " isSarcasm"
       }else if (40<=percent && percent<=60){
         tweet_score.parentElement.className=tweet_score.parentElement.className + " isNeutral"

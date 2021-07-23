@@ -159,6 +159,7 @@ model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['acc'])
 model.fit(X_train_pad, y_train, batch_size=32, epochs=30, validation_data=(X_test_pad, y_test), verbose=2)
 
+
 def is_ironique(s, model_iro):
     recup_data = pd.DataFrame({"Tweet":[s]})
     test_lignes = CleanTokenize(recup_data)

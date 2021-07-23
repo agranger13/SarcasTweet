@@ -155,4 +155,4 @@ model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['acc'])
 model.fit(X_train_pad, y_train, batch_size=32, epochs=30, validation_data=(X_test_pad, y_test), verbose=2)
 
-keras.models.save_model(model,"app/model/model_trained'")
+keras.models.save_model(model,"model/model_trained'")

@@ -125,7 +125,7 @@ def CleanTokenize(df):
 
 def predict(s):
     tokenizer_obj=Tokenizer()
-    model = keras.models.load_model('/app/model/model_trained/saved_model.pb')
+    model = keras.models.load_model('model/model_trained')
     recup_data = pd.DataFrame({"Tweet": [s]})
     test_lignes = CleanTokenize(recup_data)
     test_sequences = tokenizer_obj.texts_to_sequences(test_lignes)

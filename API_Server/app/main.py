@@ -132,5 +132,4 @@ def predict(s):
     test_review = pad_sequences(test_sequences, maxlen=25, padding='post')
     prediction = model.predict(test_review)
     prediction *= 100
-    print(prediction)
     return prediction[0][0]

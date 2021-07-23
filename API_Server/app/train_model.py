@@ -1,24 +1,25 @@
 import numpy as np
 import pandas as pd
 import os
-import re #Regular expression
+import re  # Regular expression
 import elasticsearch
 import elasticsearch.helpers
 import string
 import nltk
+import io
+import json
+
 nltk.download('punkt')
 nltk.download('stopwords')
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
-
 from tensorflow import keras
 from tensorflow.python.keras.preprocessing.text import Tokenizer
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense,LSTM, Bidirectional
+from tensorflow.python.keras.layers import Dense, LSTM, Bidirectional
 from tensorflow.python.keras.layers.embeddings import Embedding
-
 
 host = 'search-sarcastweet-7w4lvds7cvubzgyd4i4kq72gwe.us-east-2.es.amazonaws'
 
@@ -27,7 +28,7 @@ es = elasticsearch.Elasticsearch(
 )
 
 es.info()
-body={"query": {"match_all": {}}}
+body = {"query": {"match_all": {}}}
 results = elasticsearch.helpers.scan(es, query=body, index="tweets", request_timeout=30)
 data = pd.DataFrame.from_dict([document['_source'] for document in results])
 
@@ -44,6 +45,7 @@ data['sarcastic'] = data["sarcastic"].astype(int)
 data = data.drop(columns="label")
 data.head()
 
+
 def CleanTokenize(df):
     head_lines = list()
     lines = df["Tweet"].values.tolist()
@@ -53,7 +55,7 @@ def CleanTokenize(df):
         emoji = re.compile("["
                            u"\U0001F600-\U0001FFFF"  # emoticones
                            u"\U0001F300-\U0001F5FF"  # symboles 
-                           u"\U0001F680-\U0001F6FF" 
+                           u"\U0001F680-\U0001F6FF"
                            u"\U0001F1E0-\U0001F1FF"  # drapeau (iOS)
                            u"\U00002702-\U000027B0"
                            u"\U000024C2-\U0001F251"
@@ -97,6 +99,8 @@ def CleanTokenize(df):
         words = [w for w in stripped if not w in stop_words]
         head_lines.append(words)
     return head_lines
+
+
 head_lines = CleanTokenize(data)
 
 validation_split = 0.2
@@ -106,12 +110,12 @@ tokenizer_obj.fit_on_texts(head_lines)
 sequences = tokenizer_obj.texts_to_sequences(head_lines)
 
 word_index = tokenizer_obj.word_index
-print("unique tokens - ",len(word_index))
+print("unique tokens - ", len(word_index))
 vocab_size = len(tokenizer_obj.word_index) + 1
 print('vocab size -', vocab_size)
 
 lines_pad = pad_sequences(sequences, maxlen=max_length, padding='post')
-sentiment =  data['sarcastic'].values
+sentiment = data['sarcastic'].values
 
 indices = np.arange(lines_pad.shape[0])
 np.random.shuffle(indices)
@@ -126,7 +130,7 @@ y_test = sentiment[-num_validation_samples:]
 
 vector_rep = {}
 dimention = 100
-f = open(os.path.join('glove.twitter.27B.100d.txt'), encoding = "utf-8")
+f = open(os.path.join('glove.twitter.27B.100d.txt'), encoding="utf-8")
 for line in f:
     values = line.split()
     word = values[0]
@@ -139,7 +143,7 @@ c = 0
 for word, i in word_index.items():
     vector = vector_rep.get(word)
     if vector is not None:
-        c+=1
+        c += 1
         matrix[i] = vector
 
 layer = Embedding(len(word_index) + 1,
@@ -150,9 +154,37 @@ layer = Embedding(len(word_index) + 1,
 
 model = Sequential()
 model.add(layer)
-model.add(Bidirectional(LSTM(units=128 , recurrent_dropout = 0.15 , dropout = 0.25)))
+model.add(Bidirectional(LSTM(units=128, recurrent_dropout=0.15, dropout=0.25)))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['acc'])
 model.fit(X_train_pad, y_train, batch_size=32, epochs=30, validation_data=(X_test_pad, y_test), verbose=2)
 
-keras.models.save_model(model,"app/model/model_trained'")
+def is_ironique(s, model_iro):
+    recup_data = pd.DataFrame({"Tweet":[s]})
+    test_lignes = CleanTokenize(recup_data)
+    test_sequences = tokenizer_obj.texts_to_sequences(test_lignes)
+    test_review = pad_sequences(test_sequences, maxlen=max_length, padding='post')
+    prediction = model_iro.predict(test_review)
+    prediction*=100
+    return prediction[0][0]
+
+keras.models.save_model(model, "./model/model_trained")
+
+tokenizer_json = tokenizer_obj.to_json()
+with io.open('tokenizer.json', 'w', encoding='utf-8') as f:
+    f.write(json.dumps(tokenizer_json, ensure_ascii=False))
+
+print(is_ironique("go faire ma 2eme dose, a moi la 5G",model))
+print(is_ironique("J'aime bien ce film.",model))
+print(is_ironique("Genial, encore un mec bizarre",model))
+print(is_ironique("How it started:       How it's going:",model))
+
+model2 = keras.models.load_model('./model/model_trained')
+print("\nmodel2 :")
+print(is_ironique("go faire ma 2eme dose, a moi la 5G",model2))
+print(is_ironique("J'aime bien ce film.",model2))
+print(is_ironique("Genial, encore un mec bizarre",model2))
+print(is_ironique("How it started:       How it's going:",model2))
+print(is_ironique("Uranus Et Pluton🎶 🎺Airelle Besson More Greek influences in the naming of many celestial bodies, including Alpha Centauri!",model2))
+print(is_ironique("Athènes en Grèce 🇬🇷, où les Jeux Olympiques ont été re-fondés en 1896. Les Jeux antiques se tenaient eux à Olympie il y a près de 30 siècles !",model2))
+

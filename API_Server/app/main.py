@@ -8,7 +8,7 @@ import json
 import random
 import pandas as pd
 import re
-from tensorflow.python.keras.preprocessing.text import Tokenizer
+from tensorflow.python.keras.preprocessing.text import Tokenizer, tokenizer_from_json
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -24,6 +24,13 @@ app = Flask(__name__,
             template_folder='templates'
             )
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
+
+with open('/app/model/tokenizer.json') as f:
+    data = json.load(f)
+    tokenizer = tokenizer_from_json(data)
+
+model = keras.models.load_model('/app/model/model_trained')
+print("API FULL STARTED")
 
 @app.route('/')
 def homepage():
@@ -124,12 +131,21 @@ def CleanTokenize(df):
     return head_lines
 
 def predict(s):
-    tokenizer_obj=Tokenizer()
-    model = keras.models.load_model('/app/model/model_trained/saved_model.pb')
+    print("le string :")
+    print(s)
     recup_data = pd.DataFrame({"Tweet": [s]})
+    print("recup_data : ")
+    print(recup_data)
     test_lignes = CleanTokenize(recup_data)
-    test_sequences = tokenizer_obj.texts_to_sequences(test_lignes)
+    print("test_lignes")
+    print(test_lignes)
+    test_sequences = tokenizer.texts_to_sequences(test_lignes)
+    print("test_sequences")
+    print(test_sequences)
     test_review = pad_sequences(test_sequences, maxlen=25, padding='post')
+    print("test_review")
+    print(test_review)
     prediction = model.predict(test_review)
     prediction *= 100
+    print(prediction)
     return prediction[0][0]

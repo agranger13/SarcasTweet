@@ -175,12 +175,12 @@ function evaluate_sarcasm(id){
       var tootltip_score = document.getElementById(tootltipID)
 
       var responseJSON = JSON.parse(xmlHttp.response)
-      var percent = Math.round(responseJSON.label)
+      var percent = Math.round(parseFloat(responseJSON.label))
       tootltip_score.innerHTML="Sarcasm Rate <br><b>"+percent+"%</b>"
       tweet_score.innerHTML=percent+"% sarcastic"
       if(percent>65){
         tweet_score.parentElement.className=tweet_score.parentElement.className + " isSarcasm"
-      }else if (40<=percent && percent>=60){
+      }else if (40<=percent && percent<=60){
         tweet_score.parentElement.className=tweet_score.parentElement.className + " isNeutral"
       }else{
         tweet_score.parentElement.className=tweet_score.parentElement.className + " isNotSarcasm"

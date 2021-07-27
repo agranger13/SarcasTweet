@@ -91,16 +91,13 @@ function add_icon() {
   var template = tweets[0].childNodes[0]
 
   for (tweet of tweets) {
-    if (Array.from(tweet.childNodes)
-        .filter(div => div.id && list_icon.includes(div.id))
-        .length == 0) {
+    if (Array.from(tweet.childNodes).filter(div => div.id && div.id.match(/SarcasTweet_score.*/g)).length == 0){
       console.log(Array.from(tweet.childNodes).filter(div => div.id && div.id.match(/SarcasTweet_score.*/g).length > 0))
-      var ID = function () {
-        // Math.random should be unique because of its seeding algorithm.
-        // Convert it to base 36 (numbers + letters), and grab the first 9 characters
-        // after the decimal.
-        return '_' + Math.random().toString(36).substr(2, 9);
-      };
+      console.log(Array.from(tweet.childNodes)
+          .filter(div => div.id && list_icon.includes(div.id)))
+      console.log(Array.from(tweet.childNodes)
+          .filter(div => div.id && list_icon.includes(div.id))
+          .length == 0)
       var div_top = document.createElement("button")
       div_top.className = "css-1dbjc4n r-18u37iz r-1h0z5md SarcasTweet_score"
       my_id = Math.random().toString(36).substr(2, 9)

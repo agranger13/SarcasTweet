@@ -74,13 +74,13 @@
 }
 
 .isSarcasm {
-  color: #e3151f;
+  color: #e3151f !important;
 }
 
 .isNotSarcasm {
-  color: #1BCD5C;
+  color: #1BCD5C !important;
 }
 
 .isNeutral {
-  color: #1da1f2;
+  color: #1da1f2 !important;
 }

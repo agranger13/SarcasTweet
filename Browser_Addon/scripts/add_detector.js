@@ -1,5 +1,8 @@
 var list_icon = []
 var dict_text = {}
+if(typeof browser === "undefined"){
+  var browser = chrome
+}
 function display_popup(event){
   if(this.id){
     var tooltip = document.getElementById("tooltip_" + this.id)
@@ -89,15 +92,9 @@ function add_listener(){
 function add_icon() {
   var tweets = document.querySelectorAll('[data-testid="tweet"]>div:nth-child(2)>div:nth-child(2)>div:last-child')
   var template = tweets[0].childNodes[0]
-
   for (tweet of tweets) {
-    if (Array.from(tweet.childNodes).filter(div => div.id && div.id.match(/SarcasTweet_score.*/g)).length == 0){
-      console.log(Array.from(tweet.childNodes).filter(div => div.id && div.id.match(/SarcasTweet_score.*/g).length > 0))
-      console.log(Array.from(tweet.childNodes)
-          .filter(div => div.id && list_icon.includes(div.id)))
-      console.log(Array.from(tweet.childNodes)
-          .filter(div => div.id && list_icon.includes(div.id))
-          .length == 0)
+    if (Array.from(tweet.childNodes[0].childNodes).filter(div => div.id && div.id.match(/SarcasTweet_score.*/g)).length == 0){
+      console.log("tweet find")
       var div_top = document.createElement("button")
       div_top.className = "css-1dbjc4n r-18u37iz r-1h0z5md SarcasTweet_score"
       my_id = Math.random().toString(36).substr(2, 9)
@@ -137,7 +134,7 @@ function add_icon() {
 
 
       var tooltipElement = create_tooltip(div_top.id)
-
+      console.log("add element : ")
 
       div_bot.appendChild(new_icon)
       div_bot.appendChild(div_back_icon)
@@ -148,8 +145,8 @@ function add_icon() {
       div_middle.appendChild(div_middle_bot)
 
       div_top.appendChild(div_middle)
-      tweet.appendChild(div_top)
-      tweet.appendChild(tooltipElement)
+      tweet.childNodes[0].appendChild(div_top)
+      tweet.childNodes[0].appendChild(tooltipElement)
 
       evaluate_sarcasm(div_top.id)
     }
@@ -206,7 +203,4 @@ function send_feedback(text, label){
 
   xmlHttp.send( JSON.stringify({ text : text, label: label }) );
 }
-
-
-
 setInterval(add_icon,2000)

@@ -172,20 +172,12 @@ def is_ironique(s, model_iro):
 keras.models.save_model(model, "./model/model_trained")
 
 tokenizer_json = tokenizer_obj.to_json()
-with io.open('tokenizer.json', 'w', encoding='utf-8') as f:
+with io.open('./model/tokenizer.json', 'w', encoding='utf-8') as f:
     f.write(json.dumps(tokenizer_json, ensure_ascii=False))
 
 print(is_ironique("go faire ma 2eme dose, a moi la 5G",model))
 print(is_ironique("J'aime bien ce film.",model))
 print(is_ironique("Genial, encore un mec bizarre",model))
 print(is_ironique("How it started:       How it's going:",model))
-
-model2 = keras.models.load_model('./model/model_trained')
-print("\nmodel2 :")
-print(is_ironique("go faire ma 2eme dose, a moi la 5G",model2))
-print(is_ironique("J'aime bien ce film.",model2))
-print(is_ironique("Genial, encore un mec bizarre",model2))
-print(is_ironique("How it started:       How it's going:",model2))
-print(is_ironique("Uranus Et Pluton🎶 🎺Airelle Besson More Greek influences in the naming of many celestial bodies, including Alpha Centauri!",model2))
-print(is_ironique("Athènes en Grèce 🇬🇷, où les Jeux Olympiques ont été re-fondés en 1896. Les Jeux antiques se tenaient eux à Olympie il y a près de 30 siècles !",model2))
+print(is_ironique("Athènes en Grèce 🇬🇷, où les Jeux Olympiques ont été re-fondés en 1896. Les Jeux antiques se tenaient eux à Olympie il y a près de 30 siècles !",model))
 

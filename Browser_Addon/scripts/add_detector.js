@@ -114,6 +114,8 @@ function add_icon() {
         for (elem of text_element.childNodes[0].childNodes) {
           if (elem.tagName == "SPAN" && elem.childElementCount == 0) {
             result += elem.innerHTML + " "
+          }else if(elem.tagName == "SPAN" && elem.childElementCount == 1){
+            result += elem.childNodes[0].innerHTML + " "
           }
         }
         return result

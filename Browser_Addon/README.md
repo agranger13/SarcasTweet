@@ -6,7 +6,7 @@
 4. finally select `manifest.json` file
 5. go to https://ec2-18-117-242-83.us-east-2.compute.amazonaws.com:5000/
 6. accept certificate
-
+---
 1. in Chrome go to : `chrome://extensions/`
 2. Click on  `Charger l’extension non empaquetée…`
 3. finally select `Browser_Addon` folder

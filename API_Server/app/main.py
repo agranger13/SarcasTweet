@@ -42,8 +42,8 @@ def evaluate_sarcasm():
     print("start evaluation")
     print(request)
     data = request.json
-    print(data["text"])
-    result = {"label": str(predict(data["text"]))}
+    print(data["Tweet"])
+    result = {"label": str(predict(data["Tweet"]))}
     return jsonify(result)
 
 
@@ -53,8 +53,8 @@ def send_feedback():
     print("sending feedback")
     es = ES_Data()
     data = request.json
-    print(data["text"]," => ",data["label"])
-    return es.send(data["text"],data["label"])
+    print(data["Tweet"]," => ",data["label"])
+    return es.send(data["Tweet"],data["label"])
 
 class ES_Data:
     def __init__(self):
@@ -71,7 +71,7 @@ class ES_Data:
         else:
             tlabel="Non"
 
-        body = {"text": text, "label": tlabel}
+        body = {"Tweet": text, "label": tlabel}
         print(json.dumps(body))
 
         return self.es.index(index="tweets", body=body)

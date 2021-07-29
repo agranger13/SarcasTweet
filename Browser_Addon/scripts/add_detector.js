@@ -186,7 +186,7 @@ function evaluate_sarcasm(id){
     }
   }
 
-  xmlHttp.send( JSON.stringify({ text : dict_text[id] }) );
+  xmlHttp.send( JSON.stringify({ Tweet : dict_text[id] }) );
 }
 
 function send_feedback(text, label){
@@ -203,6 +203,6 @@ function send_feedback(text, label){
     }
   }
 
-  xmlHttp.send( JSON.stringify({ text : text, label: label }) );
+  xmlHttp.send( JSON.stringify({ Tweet : text, label: label }) );
 }
 setInterval(add_icon,2000)

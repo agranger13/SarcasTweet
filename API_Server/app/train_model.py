@@ -43,6 +43,7 @@ data.loc[data['label'] == "Oui", 'sarcastic'] = 1
 data.loc[data['label'] == "Non", 'sarcastic'] = 0
 data['sarcastic'] = data["sarcastic"].astype(int)
 data = data.drop(columns="label")
+print(data.shape)
 data.head()
 
 

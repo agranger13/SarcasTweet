@@ -1,5 +1,5 @@
 # SarcasTweet
-Projet final M1 AIBD
+Projet final M1 IABD
 
 ## A Télécharger avant de lancer le projet
 1. https://www.kaggle.com/bertcarremans/glovetwitter27b100dtxt
